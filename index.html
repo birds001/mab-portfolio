@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Music Auction Battle (MAB), a multiplayer music strategy game concept by Tanish Sreedharan.">
+<title>Music Auction Battle | Tanish Sreedharan</title>
+<style>
+:root{--bg:#080d18;--panel:#101a2b;--panel2:#142238;--ink:#f4f7fb;--muted:#a8b5c8;--line:#263650;--blue:#7db7ff;--cyan:#64e0d0;--gold:#f6c66b}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+a{color:inherit}.wrap{width:min(1120px,calc(100% - 40px));margin:auto}
+nav{position:sticky;top:0;z-index:5;background:#080d18eF;backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.nav{height:68px;display:flex;align-items:center;justify-content:space-between}.brand{font-weight:850;letter-spacing:.12em}.brand span{color:var(--cyan)}.navlinks{display:flex;gap:22px;font-size:13px;color:var(--muted)}.navlinks a{text-decoration:none}
+.hero{padding:88px 0 70px;background:radial-gradient(ellipse at 80% 15%,#17395a 0,transparent 42%),linear-gradient(135deg,#0b1424,#080d18 65%)}
+.eyebrow{color:var(--cyan);font-size:12px;font-weight:800;letter-spacing:.18em;text-transform:uppercase}
+h1{font-size:clamp(42px,7vw,76px);line-height:1.02;letter-spacing:-.055em;margin:18px 0;max-width:850px}
+.lead{font-size:19px;color:#c3d0e1;max-width:760px}
+.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:30px}.btn{display:inline-flex;padding:12px 18px;border-radius:10px;text-decoration:none;font-weight:750;font-size:14px;background:var(--cyan);color:#06121b}.btn.secondary{background:transparent;color:var(--ink);border:1px solid #52647e}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:48px}.stat{padding:18px;border:1px solid var(--line);background:#101a2bbd;border-radius:14px}.stat strong{display:block;font-size:27px}.stat span{color:var(--muted);font-size:12px}
+section{padding:68px 0;border-top:1px solid #1b2940}.sectionhead{display:flex;justify-content:space-between;gap:24px;align-items:end;margin-bottom:28px}h2{font-size:32px;line-height:1.1;letter-spacing:-.03em;margin:8px 0}.sub{color:var(--muted);max-width:650px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:23px}.card h3{margin:0 0 8px;font-size:19px}.card p{margin:0;color:var(--muted)}.tag{display:inline-block;font-size:11px;color:var(--cyan);border:1px solid #2e6b72;border-radius:100px;padding:3px 9px;margin-bottom:12px}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.step{padding:18px;border-radius:14px;background:var(--panel2);border:1px solid var(--line)}.step b{font-size:12px;color:var(--gold);letter-spacing:.1em}.step h3{font-size:16px;margin:8px 0}.step p{font-size:13px;color:var(--muted);margin:0}
+.demo{border:1px solid var(--line);border-radius:18px;overflow:hidden;background:#0c1422}.demohead{padding:18px 22px;display:flex;justify-content:space-between;align-items:center;gap:12px;background:var(--panel)}.demohead p{margin:0;color:var(--muted);font-size:13px}.demo iframe{width:100%;height:760px;border:0;background:#070b12}
+.metrics{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}.metric{padding:17px 12px;background:var(--panel);border:1px solid var(--line);border-radius:12px;text-align:center}.metric strong{display:block;font-size:24px;color:var(--cyan)}.metric span{font-size:12px;color:var(--muted)}
+.files{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.file{display:flex;flex-direction:column;gap:10px;padding:20px;background:var(--panel);border:1px solid var(--line);border-radius:14px}.file p{font-size:13px;color:var(--muted);margin:0;flex:1}.file a{color:var(--blue);font-weight:750;text-decoration:none;font-size:14px}
+.callout{padding:24px;border:1px solid #31506e;border-radius:16px;background:linear-gradient(120deg,#132b43,#101a2b)}.callout p{color:#c2d1e1;margin-bottom:0}
+footer{padding:35px 0;color:var(--muted);font-size:13px;border-top:1px solid var(--line)}
+@media(max-width:760px){.navlinks{display:none}.stats{grid-template-columns:repeat(2,1fr)}.grid,.files{grid-template-columns:1fr}.steps{grid-template-columns:repeat(2,1fr)}.metrics{grid-template-columns:repeat(2,1fr)}.sectionhead{display:block}.demo iframe{height:700px}.hero{padding-top:65px}}
+</style>
+</head>
+<body>
+<nav><div class="wrap nav"><div class="brand">MAB<span>.</span></div><div class="navlinks"><a href="#overview">Overview</a><a href="#gameplay">Gameplay</a><a href="#judge">Judging</a><a href="#business">Business</a><a href="#documents">Documents</a></div></div></nav>
+<header class="hero" id="overview"><div class="wrap">
+<div class="eyebrow">Product concept · Interactive prototype · Business case</div>
+<h1>Music Auction Battle<span style="color:var(--cyan)">.</span></h1>
+<p class="lead">A multiplayer music strategy game that turns music discovery into a competitive draft. Players bid with a limited virtual budget, build a five-song lineup, make strategic bonus decisions and compete head-to-head.</p>
+<div class="actions"><a class="btn" href="#prototype">Explore the playable prototype</a><a class="btn secondary" href="assets/MAB_Game_Rules_Product_Concept.pdf" target="_blank">Read the game rules</a></div>
+<div class="stats">
+<div class="stat"><strong>2</strong><span>Head-to-head players</span></div><div class="stat"><strong>$20</strong><span>Virtual auction budget each</span></div><div class="stat"><strong>5</strong><span>Songs in each starting lineup</span></div><div class="stat"><strong>7</strong><span>Maximum counted matchups</span></div>
+</div></div></header>
+<section><div class="wrap"><div class="sectionhead"><div><div class="eyebrow">The opportunity</div><h2>A new way to compete over music.</h2></div><p class="sub">MAB combines music discovery, resource management and friendly competition in one repeatable social experience.</p></div>
+<div class="grid">
+<div class="card"><span class="tag">The problem</span><h3>Listening is often passive</h3><p>Music platforms make it easy to stream, save and share songs, but friends have fewer structured ways to compete through their music taste.</p></div>
+<div class="card"><span class="tag">The concept</span><h3>Make music taste strategic</h3><p>Players navigate a randomized song pool, decide when to spend, and assemble a lineup they believe will win under a disclosed judging framework.</p></div>
+</div></div></section>
+<section id="gameplay"><div class="wrap"><div class="sectionhead"><div><div class="eyebrow">How it works</div><h2>From genre choice to final battle.</h2></div><p class="sub">A clear game loop designed for private rooms, rematches and repeat play.</p></div>
+<div class="steps">
+<div class="step"><b>01 / MATCH</b><h3>Choose a genre</h3><p>Players select a main genre and resolve an artist or subgenre format.</p></div>
+<div class="step"><b>02 / AUCTION</b><h3>Bid strategically</h3><p>Ten tracks are revealed one at a time. Players manage a shared $20 virtual budget each.</p></div>
+<div class="step"><b>03 / BUILD</b><h3>Shape the lineup</h3><p>Each player completes a five-song starting lineup and resolves any bonus opportunities.</p></div>
+<div class="step"><b>04 / BATTLE</b><h3>Compete head-to-head</h3><p>Tracks face off under the same published judging rules, with results and match history.</p></div>
+</div></div></section>
+<section id="prototype"><div class="wrap"><div class="sectionhead"><div><div class="eyebrow">Interactive product demo</div><h2>Try the MAB prototype.</h2></div><p class="sub">An early browser-based MVP demonstrating the auction interface and bidding flow. Prototype functionality and catalog data are illustrative.</p></div>
+<div class="demo"><div class="demohead"><div><strong>MAB · Arcade Auction MVP</strong><p>Interactive prototype embedded below</p></div><a class="btn secondary" href="assets/MAB_Playable_MVP.html" target="_blank">Open demo in new tab</a></div>
+<iframe src="assets/MAB_Playable_MVP.html" title="Music Auction Battle playable MVP"></iframe></div></div></section>
+<section id="judge"><div class="wrap"><div class="sectionhead"><div><div class="eyebrow">Scoring architecture</div><h2>Five categories. Equal weight.</h2></div><p class="sub">The proposed official framework gives each category 20% of the final score. The same methodology is intended to apply across game formats.</p></div>
+<div class="metrics"><div class="metric"><strong>20%</strong><span>Replayability</span></div><div class="metric"><strong>20%</strong><span>Popularity</span></div><div class="metric"><strong>20%</strong><span>Impact</span></div><div class="metric"><strong>20%</strong><span>Longevity</span></div><div class="metric"><strong>20%</strong><span>Audience engagement</span></div></div>
+<div class="callout" style="margin-top:16px"><strong>Catalog eligibility standard</strong><p>The concept's catalog standard requires at least 50 unique, officially released, eligible songs per artist. Each song must independently meet the 100,000 verified Spotify streams threshold during its first seven complete days after release. This is a proposed operating rule and depends on authorized, reliable data access.</p></div>
+</div></section>
+<section id="business"><div class="wrap"><div class="sectionhead"><div><div class="eyebrow">Commercial exploration</div><h2>Exploring a Spotify Premium integration.</h2></div><p class="sub">A hypothetical product and pricing scenario exploring whether MAB could support a higher-value subscription experience.</p></div>
+<div class="grid">
+<div class="card"><span class="tag">Pricing hypothesis</span><h3>Optional Premium upgrade</h3><p>The model tests a proposed 33% uplift over the illustrative U.S. Premium Individual list price, rather than assuming all existing Premium revenue is new MAB revenue.</p></div>
+<div class="card"><span class="tag">Financial model</span><h3>Five-year projections</h3><p>Editable assumptions, adoption scenarios, incremental revenue, operating costs, contribution and sensitivity analysis are provided in the downloadable workbook.</p></div>
+</div></div></section>
+<section id="documents"><div class="wrap"><div class="sectionhead"><div><div class="eyebrow">Project materials</div><h2>Explore the working documents.</h2></div><p class="sub">The detailed rules, judging methodology and financial model behind the concept.</p></div>
+<div class="files">
+<div class="file"><span class="tag">Product specification</span><h3>Game Rules & Product Concept</h3><p>Genre architecture, matchmaking, auction rules, bonus mechanics, artist catalog standards and product surfaces.</p><a href="assets/MAB_Game_Rules_Product_Concept.pdf" target="_blank">View PDF ↗</a></div>
+<div class="file"><span class="tag">Technical blueprint</span><h3>Judging & Impact Methodology</h3><p>Five-category scoring framework, 100,000 Rule, data requirements, fairness controls and technical blueprint.</p><a href="assets/MAB_Blueprint_Impact_Methodology.pdf" target="_blank">View PDF ↗</a></div>
+<div class="file"><span class="tag">Financial analysis</span><h3>Spotify Premium Financial Model</h3><p>Editable five-year model with assumptions, adoption scenarios, sensitivity analysis and source notes.</p><a href="assets/MAB_Spotify_Premium_Financial_Model.xlsx">Download Excel model ↓</a></div>
+</div></div></section>
+<section><div class="wrap"><div class="callout"><div class="eyebrow">Project role</div><h2>Concept development & product strategy</h2><p>Independently developed the MAB concept, gameplay structure, auction mechanics, catalog eligibility standards, judging framework, interactive MVP and preliminary subscription financial model. This is an independent concept project, not an official Spotify product, partnership or endorsement.</p></div></div></section>
+<footer><div class="wrap">© 2026 Tanish Sreedharan · Music Auction Battle (MAB) · Independent product concept and prototype.</div></footer>
+</body></html>

@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MAB | Music Auction Battle MVP</title>
+<style>
+:root{--bg:#090d16;--panel:#111a29;--panel2:#172337;--line:#26364d;--text:#edf3fb;--muted:#9aabc0;--green:#46e0a1;--cyan:#68c8ff;--gold:#ffc96b;--red:#ff7185}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 80% 0%,#17314a 0,transparent 34%),var(--bg);color:var(--text);font:15px/1.45 Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,sans-serif}button,select{font:inherit}button{cursor:pointer;border:1px solid var(--line);border-radius:11px;padding:10px 14px;background:#1a2940;color:var(--text);font-weight:700}button:hover{border-color:var(--cyan);transform:translateY(-1px)}button:disabled{opacity:.35;cursor:not-allowed;transform:none}.primary{background:linear-gradient(120deg,#1eaf82,#147e91);border:0;color:#03140f}.gold{background:#513d1c;border-color:#82622c;color:#ffe1a4}.danger{background:#4a202b;border-color:#74313f}.ghost{background:transparent}.wrap{max-width:1160px;margin:auto;padding:22px}.top{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:20px}.brand{font-weight:950;letter-spacing:2px;font-size:23px}.brand span{color:var(--green)}.tag{font-size:11px;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase}.pill{border:1px solid var(--line);border-radius:999px;padding:7px 11px;color:var(--muted);font-size:12px}.hero{padding:30px;border:1px solid var(--line);border-radius:22px;background:linear-gradient(120deg,rgba(28,49,72,.95),rgba(16,24,39,.96));margin-bottom:18px}.hero h1{font-size:clamp(30px,5vw,54px);line-height:1.02;margin:10px 0}.hero p{color:var(--muted);max-width:720px}.grid{display:grid;grid-template-columns:1.3fr .7fr;gap:16px}.panel{background:rgba(17,26,41,.94);border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:16px}.panel h2{font-size:18px;margin:0 0 12px}.muted{color:var(--muted)}.small{font-size:12px}.row{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.between{justify-content:space-between}.choices{display:flex;flex-wrap:wrap;gap:8px}.choice{padding:9px 12px;border-radius:999px;background:#101b2b}.choice.active{background:#123b38;border-color:var(--green);color:#b8ffe2}.stat{background:#0b1320;border:1px solid var(--line);border-radius:13px;padding:12px;min-width:105px}.stat b{display:block;font-size:22px}.track{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px;border:1px solid var(--line);border-radius:13px;background:#0c1523;margin:8px 0}.track strong{display:block}.track small{color:var(--muted)}.track .price{font-weight:900;color:var(--gold);white-space:nowrap}.track.current{border-color:var(--green);box-shadow:0 0 0 1px #46e0a133}.step{display:none}.step.active{display:block}.progress{height:5px;background:#1a2940;border-radius:9px;overflow:hidden;margin:12px 0 20px}.progress div{height:100%;background:linear-gradient(90deg,var(--green),var(--cyan));width:0;transition:.3s}.notice{padding:11px 13px;border-radius:12px;background:#102d2b;border:1px solid #225d53;color:#b8ffe2;margin:10px 0}.warning{padding:11px 13px;border-radius:12px;background:#332918;border:1px solid #6b5124;color:#ffe1a4;margin:10px 0}.lineup{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}.slot{border:1px dashed #3a4b62;border-radius:12px;min-height:90px;padding:9px;background:#0b1320}.slot b{display:block;color:var(--cyan);font-size:12px}.slot span{font-size:12px}.scorebar{height:9px;border-radius:9px;background:#26364d;overflow:hidden}.scorebar i{display:block;height:100%;background:linear-gradient(90deg,var(--green),var(--cyan))}.hidden{display:none!important}.footer{color:#71849c;font-size:11px;text-align:center;padding:16px}.log{max-height:170px;overflow:auto;font-size:12px;color:var(--muted)}
+@media(max-width:780px){.grid{grid-template-columns:1fr}.lineup{grid-template-columns:repeat(2,1fr)}.top{align-items:flex-start;flex-direction:column}.hero{padding:22px}}
+
+/* === MAB ARCADE VISUAL REFRESH: presentation only; game logic unchanged === */
+:root{
+ --bg:#090714;--panel:#151329;--panel2:#201b3b;--line:#39345d;
+ --text:#f8f5ff;--muted:#aaa5c8;--green:#74f2c2;--cyan:#76d8ff;
+ --gold:#ffd27a;--red:#ff789e;--violet:#a78bfa;--pink:#ff83c8;
+}
+*{scrollbar-color:#514879 #100e20}
+body{
+ background:
+ radial-gradient(ellipse at 12% 4%,rgba(128,86,255,.25),transparent 32%),
+ radial-gradient(ellipse at 92% 18%,rgba(255,91,170,.16),transparent 28%),
+ radial-gradient(ellipse at 52% 100%,rgba(44,191,214,.12),transparent 35%),
+ #090714;
+ color:var(--text);
+}
+body:before{
+ content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;opacity:.22;
+ background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+ background-size:42px 42px;
+}
+.wrap{max-width:1240px;padding:26px 24px 36px}
+.top{padding:12px 4px 18px;border-bottom:1px solid rgba(167,139,250,.18)}
+.brand{font-size:27px;letter-spacing:3px;text-shadow:0 0 24px rgba(167,139,250,.45)}
+.brand span{color:var(--pink)}
+.tag{color:#b6addd;letter-spacing:2px;font-weight:800}
+.pill{background:rgba(31,26,58,.8);border-color:#514879;color:#d2cbed}
+.hero{
+ position:relative;overflow:hidden;padding:clamp(28px,5vw,54px);
+ border:1px solid rgba(167,139,250,.42);border-radius:28px;
+ background:linear-gradient(118deg,rgba(49,37,91,.96),rgba(24,22,53,.96) 55%,rgba(36,24,61,.96));
+ box-shadow:0 24px 80px rgba(0,0,0,.34),inset 0 1px rgba(255,255,255,.09);
+}
+.hero:after{
+ content:"♫";position:absolute;right:5%;top:-42px;font-size:clamp(170px,26vw,330px);
+ line-height:1;color:rgba(255,255,255,.045);font-weight:900;transform:rotate(12deg);pointer-events:none;
+}
+.hero h1{max-width:760px;font-size:clamp(38px,6vw,68px);letter-spacing:-2.6px;text-shadow:0 5px 35px rgba(0,0,0,.25)}
+.hero p{font-size:16px;max-width:680px;color:#c6c0df}
+.stat{
+ background:linear-gradient(145deg,rgba(17,15,37,.96),rgba(30,25,57,.96));
+ border:1px solid rgba(167,139,250,.28);border-radius:17px;padding:14px 16px;
+ box-shadow:inset 0 1px rgba(255,255,255,.05);
+}
+.stat b{font-size:25px;letter-spacing:-.5px}
+.panel{
+ background:linear-gradient(145deg,rgba(26,23,52,.97),rgba(17,16,37,.97));
+ border:1px solid rgba(167,139,250,.24);border-radius:22px;padding:22px;
+ box-shadow:0 14px 40px rgba(0,0,0,.20),inset 0 1px rgba(255,255,255,.045);
+}
+.panel h2{font-size:20px;letter-spacing:-.4px}
+.grid{gap:18px}
+button{
+ border:1px solid #49436f;border-radius:13px;padding:11px 16px;
+ background:linear-gradient(145deg,#292448,#1d1a38);color:#f8f5ff;
+ box-shadow:0 5px 14px rgba(0,0,0,.18);
+ transition:transform .16s ease,border-color .16s ease,filter .16s ease,box-shadow .16s ease;
+}
+button:hover{border-color:var(--pink);transform:translateY(-2px);filter:brightness(1.12);box-shadow:0 8px 22px rgba(167,139,250,.16)}
+button:active{transform:translateY(0) scale(.985)}
+.primary{
+ color:#160e2a;font-weight:900;border:0;
+ background:linear-gradient(110deg,#80f4c6,#78d9ff 55%,#c5a2ff);
+ box-shadow:0 7px 24px rgba(118,216,255,.18);
+}
+.primary:hover{border:0;box-shadow:0 9px 28px rgba(197,162,255,.3)}
+.choice{background:rgba(17,15,39,.9);border-color:#49436f}
+.choice.active{background:linear-gradient(120deg,rgba(88,63,151,.65),rgba(32,104,107,.45));border-color:var(--green);color:#caffeb;box-shadow:0 0 0 2px rgba(116,242,194,.08)}
+.danger{background:linear-gradient(120deg,#5b243e,#3d1c38);border-color:#94466f;color:#ffd8e7}
+.gold{background:linear-gradient(120deg,#5d4724,#3d2d25);border-color:#9d7940;color:#ffe8b2}
+.ghost{background:rgba(12,10,27,.4)}
+.progress{height:8px;background:#211d3d;border-radius:20px;box-shadow:inset 0 1px 3px #05040d}
+.progress div{background:linear-gradient(90deg,#76f0bd,#76d8ff,#c59cff,#ff83c8);box-shadow:0 0 14px rgba(118,216,255,.4)}
+.notice{
+ background:linear-gradient(110deg,rgba(29,76,73,.65),rgba(35,49,80,.58));
+ border:1px solid rgba(116,242,194,.32);border-radius:14px;color:#d1ffed;
+}
+.warning{background:linear-gradient(110deg,rgba(88,60,26,.65),rgba(76,39,57,.45));border-color:#9d7940;color:#ffe8b2}
+.track{
+ background:linear-gradient(110deg,rgba(15,13,33,.98),rgba(31,25,57,.96));
+ border:1px solid rgba(167,139,250,.3);border-radius:17px;padding:16px;
+ box-shadow:inset 0 1px rgba(255,255,255,.04);
+}
+.track.current{border-color:var(--green);box-shadow:0 0 0 1px rgba(116,242,194,.22),0 0 28px rgba(116,242,194,.08)}
+.track .price{color:var(--gold);text-shadow:0 0 14px rgba(255,210,122,.18)}
+.slot{
+ background:linear-gradient(160deg,rgba(18,16,39,.96),rgba(27,24,53,.9));
+ border:1px dashed #5a527d;border-radius:14px;min-height:96px;
+}
+.slot b{color:var(--cyan);letter-spacing:.4px}
+.scorebar{background:#292447}
+.scorebar i{background:linear-gradient(90deg,#76f0bd,#76d8ff,#c59cff)}
+input[type=number],input[type=text],select{
+ border:1px solid #554b7e!important;border-radius:12px!important;background:#100e22!important;color:#fff!important;
+}
+input[type=range]{accent-color:#a78bfa!important}
+.log{background:rgba(9,7,20,.45);border:1px solid rgba(167,139,250,.16);border-radius:12px;padding:10px}
+.footer{color:#8982a9}
+#artistTimerPanel{background:linear-gradient(100deg,rgba(57,38,91,.72),rgba(27,54,72,.62));border-color:rgba(197,162,255,.4)}
+#artistTimer{color:#ffe19a;text-shadow:0 0 18px rgba(255,210,122,.35)}
+#novaArtistPicks .pill{background:rgba(116,242,194,.09);border-color:rgba(116,242,194,.35);color:#caffeb}
+#yourArtistInputs .choice{min-width:120px}
+#yourArtistInputs .choice.active{background:linear-gradient(120deg,#265e58,#34416c);border-color:#76f0bd}
+.step{animation:stageIn .35s ease both}
+@keyframes stageIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:780px){
+ .wrap{padding:16px 13px 28px}.hero{border-radius:22px}.panel{padding:17px}.hero h1{letter-spacing:-1.5px}
+ .track{align-items:flex-start}.track .price{white-space:normal;text-align:right}
+}
+
+</style></head>
+<body><div class="wrap">
+<header class="top"><div><div class="brand">M<span>A</span>B</div><div class="tag">Music Auction Battle · playable MVP</div></div><div class="row"><span class="pill">DEMO MODE</span><span class="pill">No real money · No Spotify connection</span></div></header>
+<section class="hero"><div class="tag">Build your lineup. Win the matchup.</div><h1>Music is the arena.</h1><p>Choose your lane, enter the auction, spend your $20 wisely, then put your five-song lineup head-to-head. This prototype demonstrates the core game loop.</p><div class="row"><div class="stat"><b>$20</b><span class="small muted">Starting budget</span></div><div class="stat"><b>5</b><span class="small muted">Starting songs</span></div><div class="stat"><b>7</b><span class="small muted">Matchup maximum</span></div></div></section>
+<div class="progress"><div id="progress"></div></div>
+<section id="s1" class="step active"><div class="grid"><div class="panel"><div class="tag">01 / matchmaking</div><h2>Choose your main genre</h2><p class="muted">You only get matched with someone who selected the same main genre.</p><div id="genres" class="choices"></div><div class="row" style="margin-top:18px"><button class="primary" onclick="toStep2()">Find opponent →</button></div></div><aside class="panel"><h2>Your match</h2><div class="notice">Opponent found: <b>DJ Nova</b></div><p class="muted small">Demo opponent · plays the same main genre · automated bids and lineup decisions.</p><div class="stat"><b id="genreStat">Rap</b><span class="small muted">Selected genre</span></div></aside></div></section>
+<section id="s2" class="step"><div class="grid"><div class="panel"><div class="tag">02 / category setup</div><h2>Choose your subcategory format</h2><p class="muted">Choose either Specific Artist or Actual Subgenre. DJ Nova makes an independent format choice behind the scenes. If your choices differ, a 50/50 draw decides which format the game uses.</p><div class="choices"><button id="artistBtn" class="choice active" onclick="pickFormat('artist')">Specific artist</button><button id="subBtn" class="choice" onclick="pickFormat('subgenre')">Actual subgenre</button></div><div id="prefChoices" class="choices hidden"></div><div class="notice" id="formatResult">Choose Specific Artist or Actual Subgenre, then submit your choice.</div>
+<div id="formatReveal" class="panel hidden" style="margin-top:14px;background:#0b1725">
+<h2 id="novaChoiceTitle">DJ Nova's choice</h2>
+<p id="novaChoiceText" class="muted"></p>
+<p id="formatOutcome" class="notice"></p>
+<div id="artistNomination" class="hidden">
+<div id="artistTimerPanel" class="notice" style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin:12px 0">
+ <span><strong>Artist selection time</strong><br><small class="muted">Choose five artists before time runs out.</small></span>
+ <strong id="artistTimer" style="font-size:1.5rem;font-variant-numeric:tabular-nums">01:00</strong>
+</div>
+  <h2>Choose five eligible artists from this subgenre</h2>
+  <p class="small muted">Enter five artists whose music fits the selected subgenre. DJ Nova will also select five artists. The demo can only populate tracks from its sample catalog; live Spotify search requires a Spotify integration.</p>
+  <div id="yourArtistInputs" class="choices"></div>
+  <h3 style="margin-top:16px">DJ Nova's five randomly selected artists</h3><p id="novaPickStatus" class="small muted">Nova's picks will appear after you confirm your five.</p>
+  <div id="novaArtistPicks" class="choices"></div>
+  <button id="buildPoolButton" class="primary" onclick="buildSubgenrePool()">Submit artists & build song pool →</button>
+<button id="startAuctionButton" class="primary hidden" onclick="startAuctionWithPool()">Start auction →</button>
+</div>
+<button id="continueAuction" class="primary hidden" onclick="continueFromFormat()">Continue →</button>
+</div>
+<div class="row"><button class="ghost" onclick="showStep(1)">← Back</button><button id="submitFormat" class="primary" onclick="resolveCategory()">Submit choice →</button></div></div><aside class="panel"><h2>How category selection works</h2><p class="small muted">After you submit, DJ Nova reveals its independently randomized choice.</p><p class="small muted">If you chose the same format, that format is selected automatically. No format coin flip.</p><p class="small muted">If you chose different formats, a 50/50 draw selects between your choice and Nova’s.</p><p class="small muted">Artist format: the system randomly selects one artist from the main-genre demo catalog and automatically draws that artist's songs. Subgenre format: each player supplies five eligible artists before the shared song pool is built.</p></aside></div></section>
+<section id="s3" class="step"><div class="panel"><div class="tag">03 / auction room</div><div class="row between"><div><h2>Live song auction</h2><p class="muted small" id="auctionProgress">Auction song 1 / 100 · Time limit</p><p class="muted small" id="categoryLabel">Category: Trap · Demo song pool</p></div><div class="row"><div class="stat"><b id="budget">$20</b><span class="small muted">Your budget</span></div><div class="stat"><b id="opBudget">$20</b><span class="small muted">Nova's budget</span></div></div></div><div class="grid"><div><div class="track current"><div><strong id="currentSong">Song title</strong><small id="currentArtist">Artist</small></div><div class="price" id="currentPrice">Opening bid $1</div></div><div class="bid-entry" style="display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:12px 0">
+<label for="bidAmount" style="font-weight:700">Your bid ($)</label>
+<input id="bidAmount" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" value="1" style="width:90px;padding:12px;border-radius:10px;border:1px solid #34465e;background:#0b1422;color:#f3f7ff;font-size:17px;font-weight:700">
+<input id="bidSlider" type="range" min="1" max="20" step="1" value="1" style="flex:1;min-width:130px;accent-color:#46e0a1">
+<button id="submitBid" onclick="submitBid()">Place bid</button>
+<button class="danger" onclick="passBid()">Pass</button>
+</div>
+<div class="row" style="margin-top:8px"><span class="small muted" id="bidLimit">You can bid up to $20</span><span class="small muted" id="auctionTurn">Your turn to open</span></div><div class="notice" id="auctionMessage">Win five starting songs. Nova is bidding automatically.</div></div><aside><h2>Starting lineup</h2><div class="lineup" id="lineup"></div><h2 style="margin-top:18px">Nova's lineup</h2><div class="lineup" id="oppLineup"></div><div class="log" id="log"></div></aside></div></div></section>
+<section id="s4" class="step"><div class="panel"><div class="tag">04 / bonus strategy</div><h2>Your starting five are set.</h2><p class="muted">Bonus entitlement is calculated only after completing all five starting songs: one bonus slot for every complete $4 remaining. The same rule applies to DJ Nova.</p><div class="row"><div class="stat"><b id="leftover">$0</b><span class="small muted">Money remaining</span></div><div class="stat"><b id="bonusCount">0</b><span class="small muted">Bonus slots earned</span></div></div><div id="bonusArea"></div><div class="row" style="margin-top:15px"><button class="primary" onclick="startJudging()">Go to head-to-head judging →</button></div></div></section>
+<section id="s5" class="step"><div class="panel"><div class="tag">05 / head-to-head</div><h2>Matchup scorecard</h2><p class="muted">Demo scores illustrate the five-category judging model. Each category is worth 20%.</p><div id="matchups"></div><div class="row" style="margin-top:16px"><button class="primary" onclick="nextMatch()" id="nextMatchBtn">Next matchup →</button><button class="ghost" onclick="restart()">Restart demo</button></div><div id="finalResult" class="notice hidden"></div></div></section>
+<div class="footer">MAB is an independent concept prototype. Sample tracks, opponent actions and judging scores are illustrative, not live Spotify data or a Spotify partnership.</div>
+</div>
+<script>
+const genreList=['Rap','Trap','Pop','Rock','Country','R&B','Electronic','Jazz','Metal','Latin','Reggae','Classical'];
+const catalog={Rap:["Yeat", "Ken Carson", "Destroy Lonely", "Homixide Gang", "OsamaSon", "Summrs", "Autumn!", "LUCKI", "Glokk40Spaz", "Nettspend", "Che", "xaviersobased", "SoFaygo", "Kankan", "1oneam", "LAZER DIM 700", "Hardrock", "Tana", "Yhapojj", "Nine Vicious"],Trap:["Yeat", "Ken Carson", "Destroy Lonely", "Homixide Gang", "OsamaSon", "Summrs", "Autumn!", "LUCKI", "Glokk40Spaz", "Nettspend", "Che", "xaviersobased", "SoFaygo", "Kankan", "1oneam", "LAZER DIM 700", "Hardrock", "Tana", "Yhapojj", "Nine Vicious"],Pop:['Dua Lipa','The Weeknd','Billie Eilish','Taylor Swift','Ariana Grande'],Rock:['Foo Fighters','Paramore','Nirvana','The Strokes','Arctic Monkeys'],Country:['Morgan Wallen','Kacey Musgraves','Luke Combs','Zach Bryan','Maren Morris'],'R&B':['SZA','Frank Ocean','The Weeknd','H.E.R.','Brent Faiyaz'],Electronic:['Daft Punk','Skrillex','Fred again..','Calvin Harris','Disclosure'],Jazz:['Miles Davis','John Coltrane','Herbie Hancock','Ella Fitzgerald','Nina Simone'],Metal:['Metallica','Deftones','Slipknot','Tool','System of a Down'],Latin:['Bad Bunny','J Balvin','Karol G','Rosalía','Peso Pluma'],Reggae:['Bob Marley','Burning Spear','Toots & the Maytals','Peter Tosh','Ziggy Marley'],Classical:['Bach','Mozart','Beethoven','Chopin','Debussy']};
+const tracks=[["Get Busy", "Yeat"], ["Money So Big", "Yeat"], ["Turban", "Yeat"], ["Sorry Bout That", "Yeat"], ["Poppin", "Yeat"], ["Outsidë", "Yeat"], ["Nvr Again", "Yeat"], ["Talk", "Yeat"], ["Flawlëss", "Yeat"], ["Bëttr 0ff", "Yeat"], ["Nun id change", "Yeat"], ["Rav3 p4rty", "Yeat"], ["Shmunk", "Yeat"], ["If We Being Rëal", "Yeat"], ["Breathe", "Yeat"], ["Psycho CEO", "Yeat"], ["GEEK TIMË", "Yeat"], ["STFU", "Yeat"], ["Speedball", "Yeat"], ["Orchesträtë", "Yeat"], ["Yale", "Ken Carson"], ["Rock N Roll", "Ken Carson"], ["Freestyle 2", "Ken Carson"], ["Fighting My Demons", "Ken Carson"], ["Jennifer's Body", "Ken Carson"], ["Singapore", "Ken Carson"], ["Overseas", "Ken Carson"], ["Me N My Kup", "Ken Carson"], ["Vampire Hour", "Ken Carson"], ["Nightcore", "Ken Carson"], ["PDBMH", "Ken Carson"], ["i need u", "Ken Carson"], ["Run + Ran", "Ken Carson"], ["MDMA", "Ken Carson"], ["Gems", "Ken Carson"], ["Fuk 12", "Ken Carson"], ["Rockstar Lifestyle", "Ken Carson"], ["Succubus", "Ken Carson"], ["Hardcore", "Ken Carson"], ["Green Room", "Ken Carson"], ["Bane", "Destroy Lonely"], ["NOSTYLIST", "Destroy Lonely"], ["VTMNTSCOAT", "Destroy Lonely"], ["if looks could kill", "Destroy Lonely"], ["how u feel?", "Destroy Lonely"], ["fly sht", "Destroy Lonely"], ["which one", "Destroy Lonely"], ["brazy girls", "Destroy Lonely"], ["FAKENGGAS", "Destroy Lonely"], ["by the pound", "Destroy Lonely"], ["NEVEREVER", "Destroy Lonely"], ["TURNINUP", "Destroy Lonely"], ["MONEY & SEX", "Destroy Lonely"], ["THRILL", "Destroy Lonely"], ["crystal castles", "Destroy Lonely"], ["Lifestyle", "Homixide Gang"], ["Uzi Work", "Homixide Gang"], ["5unna", "Homixide Gang"], ["SSN", "Homixide Gang"], ["V-Friends", "Homixide Gang"], ["Drakon!", "Homixide Gang"], ["Blocks", "Homixide Gang"], ["CV", "Homixide Gang"], ["Notice It", "Homixide Gang"], ["ADHD", "Homixide Gang"], ["WYD", "Homixide Gang"], ["TF!", "Homixide Gang"], ["Snotty Wax!", "Homixide Gang"], ["Holler!", "Homixide Gang"], ["55 Lifestyle", "Homixide Gang"], ["Cts-V", "OsamaSon"], ["Troops", "OsamaSon"], ["Kutta", "OsamaSon"], ["Werkin", "OsamaSon"], ["X & Sex", "OsamaSon"], ["All Star", "OsamaSon"], ["Congrats", "OsamaSon"], ["MVP", "OsamaSon"], ["Double Ds", "OsamaSon"], ["Summer Sixteen", "OsamaSon"], ["Pop", "OsamaSon"], ["Blonde", "OsamaSon"], ["Drenched", "OsamaSon"], ["Withdrawals", "OsamaSon"], ["Boss Up", "OsamaSon"], ["Cannot Be Me", "Summrs"], ["Swing Ya Pole", "Summrs"], ["So Much Cheese", "Summrs"], ["Back 2 Da Basics", "Summrs"], ["Like Woah", "Summrs"], ["Mudd Bruddas", "Summrs"], ["Where We Left", "Summrs"], ["Rehab", "Summrs"], ["Bellworld", "Summrs"], ["Just Can't", "Summrs"], ["Cut So Deep", "Summrs"], ["Z06", "Summrs"], ["Test Sum", "Summrs"], ["Shoulder", "Summrs"], ["Put Out Fye", "Summrs"], ["Super Urus", "LUCKI"], ["New Drank", "LUCKI"], ["More Than Ever", "LUCKI"], ["4 The Betta", "LUCKI"], ["Sunset", "LUCKI"], ["Poker Face", "LUCKI"], ["Incoming", "LUCKI"], ["Faith", "LUCKI"], ["Y Not?", "LUCKI"], ["Geeked", "LUCKI"], ["Unlimited", "LUCKI"], ["Options", "LUCKI"], ["Randomly", "LUCKI"], ["Peach Dream", "LUCKI"], ["Kapitol Denim", "LUCKI"], ["Sky", "Playboi Carti"], ["Stop Breathing", "Playboi Carti"], ["Rockstar Made", "Playboi Carti"], ["New Tank", "Playboi Carti"], ["M3tamorphosis", "Playboi Carti"], ["Magnolia", "Playboi Carti"], ["Shoota", "Playboi Carti"], ["R.I.P.", "Playboi Carti"], ["Long Time", "Playboi Carti"], ["Location", "Playboi Carti"], ["Faneto", "Chief Keef"], ["Love Sosa", "Chief Keef"], ["I Don't Like", "Chief Keef"], ["Hate Bein' Sober", "Chief Keef"], ["Earned It", "Chief Keef"], ["The Bigger Picture", "Lil Baby"], ["Freestyle", "Lil Baby"], ["Yes Indeed", "Lil Baby"], ["Drip Too Hard", "Lil Baby"], ["Woah", "Lil Baby"], ["March Madness", "Future"], ["Mask Off", "Future"], ["Codeine Crazy", "Future"], ["Life Is Good", "Future"], ["712PM", "Future"], ["FE!N", "Travis Scott"], ["Antidote", "Travis Scott"], ["SICKO MODE", "Travis Scott"], ["goosebumps", "Travis Scott"], ["MY EYES", "Travis Scott"], ["Family Ties", "Baby Keem"], ["Just Wanna Rock", "Lil Uzi Vert"], ["Praise The Lord", "A$AP Rocky"], ["a lot", "21 Savage"], ["Wokeup", "Ken Carson"], ["Super Urus (Alt)", "LUCKI"], ["Nina", "Autumn!"], ["Lifestyle (Alt)", "Homixide Gang"]];
+const MAX_AUCTION_SONGS=100;let auctionFinished=false;
+let genre='Rap',format='artist',preference='Chief Keef',pool=[],idx=0,budget=20,opBudget=20,my=[],opp=[],bonus=[],current=null,high=0,highBidder=null,turn='you',lot=0,match=0,myWins=0,oppWins=0,openingBidder='you',auctionClosed=false,novaThinking=false;
+const $=id=>document.getElementById(id);document.addEventListener('DOMContentLoaded',()=>{
+ const a=$('bidAmount'),s=$('bidSlider');
+ if(a&&s){a.addEventListener('input',syncBidSlider);s.addEventListener('input',syncBidControls);}
+});
+function showStep(n){document.querySelectorAll('.step').forEach(x=>x.classList.remove('active'));$('s'+n).classList.add('active');$('progress').style.width=([0,15,32,55,77,100][n])+'%';}
+function renderGenres(){ $('genres').innerHTML=genreList.map(g=>`<button class="choice ${g===genre?'active':''}" onclick="selectGenre('${g}')">${g}</button>`).join('');$('genreStat').textContent=genre;}
+function selectGenre(g){genre=g;renderGenres();}
+function toStep2(){showStep(2);renderPrefs();}
+function pickFormat(f){format=f;$('artistBtn').classList.toggle('active',f==='artist');$('subBtn').classList.toggle('active',f==='subgenre');renderPrefs();}
+let resolvedFormat=null,resolvedCategoryName=null,formatSubmitted=false,novaArtistPicks=[];
+function renderPrefs(){
+ $('prefChoices').innerHTML='';
+ $('formatResult').textContent=`Your selection: ${format==='artist'?'Specific Artist':'Actual Subgenre'}. Submit when ready.`;
+ $('formatReveal').classList.add('hidden');
+ $('continueAuction').classList.add('hidden');
+ $('artistNomination').classList.add('hidden');
+ $('submitFormat').disabled=false;
+ formatSubmitted=false;
+}
+function pickFormat(f){
+ if(formatSubmitted)return;
+ format=f;
+ $('artistBtn').classList.toggle('active',f==='artist');
+ $('subBtn').classList.toggle('active',f==='subgenre');
+ renderPrefs();
+}
+function resolveCategory(){
+ if(formatSubmitted)return;
+ formatSubmitted=true;
+ $('submitFormat').disabled=true;
+ $('formatResult').textContent='DJ Nova is choosing a format…';
+ setTimeout(()=>{
+   const novaFormat=Math.random()<0.5?'artist':'subgenre';
+   let chosenFormat;
+   $('formatReveal').classList.remove('hidden');
+   $('novaChoiceTitle').textContent='DJ Nova chose: '+(novaFormat==='artist'?'Specific Artist':'Actual Subgenre');
+   if(novaFormat===format){
+     chosenFormat=format;
+     $('novaChoiceText').textContent='You and DJ Nova chose the same format.';
+     $('formatOutcome').textContent='No second randomizer is needed. Your shared format wins.';
+   }else{
+     chosenFormat=Math.random()<0.5?format:novaFormat;
+     $('novaChoiceText').textContent='You chose '+(format==='artist'?'Specific Artist':'Actual Subgenre')+'; DJ Nova chose '+(novaFormat==='artist'?'Specific Artist':'Actual Subgenre')+'.';
+     $('formatOutcome').textContent='Your choices differed. A 50/50 draw selected '+(chosenFormat==='artist'?'Specific Artist':'Actual Subgenre')+'.';
+   }
+   resolvedFormat=chosenFormat;
+   if(chosenFormat==='artist'){
+     // Only artists represented in the current local Trap/Underground demo catalog are eligible.
+     const genreArtists=[...new Set(tracks.map(t=>t[1]))].filter(a=>(catalog[genre]||catalog.Trap).some(x=>x.toLowerCase()===a.toLowerCase()));
+     if(!genreArtists.length){$('formatOutcome').textContent+=' No artists with demo tracks are available for this genre yet.';return;}
+     resolvedCategoryName=genreArtists[Math.floor(Math.random()*genreArtists.length)];
+     const artistTracks=tracks.filter(t=>t[1].toLowerCase()===resolvedCategoryName.toLowerCase());
+     const uniqueArtistTracks=[...new Map(artistTracks.map(t=>[(t[0]+'|'+t[1]).toLowerCase(),t])).values()];
+     pool=uniqueArtistTracks.sort(()=>Math.random()-.5).slice(0,10);
+     $('formatOutcome').textContent+=' Random artist selected from '+genre+': '+resolvedCategoryName+'. The system automatically selected '+pool.length+' songs from this artist. No artist nominations are needed in this format.';
+     $('categoryLabel').textContent=`Category: ${genre} · Artist: ${resolvedCategoryName}`;
+     $('artistNomination').classList.add('hidden');
+     $('continueAuction').classList.remove('hidden');
+     $('continueAuction').textContent='Start artist auction →';
+     $('continueAuction').onclick=startAuctionWithPool;
+   }else{
+     const subsByGenre={
+       Rap:['Drill','Rage','Emo Rap','Cloud Rap','Underground Rap','Trap'],
+       Trap:['Underground Trap','Dark Trap','PluggnB','Street Trap','Pop Trap'],
+       Pop:['Dance Pop','Synth Pop','Indie Pop','Electropop','Dream Pop'],
+       Rock:['Alternative Rock','Indie Rock','Punk Rock','Hard Rock','Shoegaze'],
+       Country:['Country Pop','Americana','Outlaw Country','Country Rock','Bluegrass'],
+       'R&B':['Alternative R&B','Neo Soul','Contemporary R&B','Quiet Storm','New Jack Swing'],
+       Electronic:['House','Techno','Drum and Bass','Dubstep','Trance'],
+       Jazz:['Bebop','Modal Jazz','Cool Jazz','Fusion','Swing'],
+       Metal:['Nu Metal','Death Metal','Metalcore','Thrash Metal','Doom Metal'],
+       Latin:['Reggaeton','Latin Trap','Bachata','Salsa','Regional Mexican'],
+       Reggae:['Roots Reggae','Dancehall','Dub','Rocksteady','Ska'],
+       Classical:['Baroque','Romantic','Classical Period','Impressionist','Modern Classical']
+     };
+     const subs=subsByGenre[genre]||subsByGenre.Rap;
+     resolvedCategoryName=subs[Math.floor(Math.random()*subs.length)];
+     $('formatOutcome').textContent+=' Random subgenre selected: '+resolvedCategoryName+'. Each contestant chooses five eligible artists.';
+     $('categoryLabel').textContent=`Category: ${genre} · Subgenre: ${resolvedCategoryName}`;
+     prepareArtistNomination();
+   }
+   $('formatResult').textContent='Format resolution complete.';
+ },650);
+}
+let userArtistPicks=[];let artistSelectionTimer=null;let artistSecondsLeft=60;let artistSelectionLocked=false;
+function prepareArtistNomination(){
+ if(artistSelectionTimer){clearInterval(artistSelectionTimer);artistSelectionTimer=null;}
+ artistSecondsLeft=60;artistSelectionLocked=false;
+ $('artistNomination').classList.remove('hidden');
+ $('continueAuction').classList.add('hidden');
+ userArtistPicks=[];
+ const roster=catalog.Trap;
+ $('yourArtistInputs').innerHTML=roster.map(a=>`<button type="button" class="choice" data-artist="${a.replace(/&/g,'&amp;').replace(/"/g,'&quot;')}" onclick="toggleUserArtist(this)">${a}</button>`).join('');
+ novaArtistPicks=[];
+ $('novaArtistPicks').innerHTML='<span class="pill">Nova will reveal five after your selections</span>';
+ $('buildPoolButton').disabled=true;
+ $('buildPoolButton').classList.remove('hidden');
+ $('startAuctionButton').classList.add('hidden');
+ $('buildPoolButton').textContent='Submit artists & build song pool →';
+ $('artistTimer').textContent='01:00';
+ $('artistTimerPanel').style.borderColor='';
+ updateArtistPickCount();
+ artistSelectionTimer=setInterval(()=>{
+   artistSecondsLeft=Math.max(0,artistSecondsLeft-1);
+   $('artistTimer').textContent=`00:${String(artistSecondsLeft).padStart(2,'0')}`;
+   if(artistSecondsLeft<=10)$('artistTimerPanel').style.borderColor='#ef8b62';
+   if(artistSecondsLeft===0){
+     clearInterval(artistSelectionTimer);artistSelectionTimer=null;
+     if(userArtistPicks.length<5){
+       const remaining=roster.filter(a=>!userArtistPicks.some(x=>x.toLowerCase()===a.toLowerCase()));
+       const needed=5-userArtistPicks.length;
+       const auto=remaining.sort(()=>Math.random()-.5).slice(0,needed);
+       userArtistPicks=[...userArtistPicks,...auto];
+       document.querySelectorAll('#yourArtistInputs [data-artist]').forEach(b=>{
+         if(userArtistPicks.some(a=>a.toLowerCase()===b.getAttribute('data-artist').toLowerCase()))b.classList.add('active');
+       });
+       $('formatOutcome').textContent=`Time expired. ${needed} artist(s) were randomly selected to complete your five.`;
+     }else{
+       $('formatOutcome').textContent='Time expired. Your five selected artists are locked.';
+     }
+     artistSelectionLocked=true;
+     document.querySelectorAll('#yourArtistInputs [data-artist]').forEach(b=>b.disabled=true);
+     buildSubgenrePool();
+   }
+ },1000);
+}
+function toggleUserArtist(button){
+ if(artistSelectionLocked)return;
+ const name=button.getAttribute('data-artist');
+ const key=name.toLowerCase();
+ if(userArtistPicks.some(a=>a.toLowerCase()===key)){
+   userArtistPicks=userArtistPicks.filter(a=>a.toLowerCase()!==key);
+   button.classList.remove('active');
+ }else{
+   if(userArtistPicks.length>=5){$('formatOutcome').textContent='You can select exactly five artists. Remove one before choosing another.';return;}
+   userArtistPicks.push(name);
+   button.classList.add('active');
+ }
+ updateArtistPickCount();
+}
+function updateArtistPickCount(){
+ $('formatOutcome').textContent=`Your selections: ${userArtistPicks.length}/5 artists.`;
+ $('buildPoolButton').disabled=userArtistPicks.length!==5;
+}
+function buildSubgenrePool(){
+ if(artistSelectionTimer){clearInterval(artistSelectionTimer);artistSelectionTimer=null;}
+ if(userArtistPicks.length!==5){alert('Select exactly five artists.');return;}
+ const remaining=(catalog.Trap||[]).filter(a=>!userArtistPicks.some(u=>u.toLowerCase()===a.toLowerCase()));
+ novaArtistPicks=remaining.sort(()=>Math.random()-.5).slice(0,5);
+ $('novaArtistPicks').innerHTML=novaArtistPicks.map(a=>`<span class="pill">${a}</span>`).join('');
+ $('novaPickStatus').textContent='DJ Nova selected five artists randomly from the remaining roster.';
+ const allowed=[...userArtistPicks,...novaArtistPicks].map(a=>a.toLowerCase());
+ const matches=tracks.filter(t=>allowed.includes(t[1].toLowerCase()));
+ const unique=new Map();
+ matches.forEach(t=>unique.set((t[0]+'|'+t[1]).toLowerCase(),t));
+ pool=[...unique.values()].sort(()=>Math.random()-.5).slice(0,10);
+ $('formatOutcome').textContent=`You and Nova selected five artists each. ${pool.length} unique demo tracks are available from those ten artists.`;
+ $('yourArtistInputs').querySelectorAll('button').forEach(b=>b.disabled=true);
+ $('buildPoolButton').classList.add('hidden');
+ $('startAuctionButton').classList.remove('hidden');
+}
+function beginAuction(){
+ if(!resolvedFormat||!resolvedCategoryName)return;
+ if(resolvedFormat==='artist'){
+   const artistTracks=tracks.filter(t=>t[1].toLowerCase()===resolvedCategoryName.toLowerCase());
+   const unique=[...new Map(artistTracks.map(t=>[(t[0]+'|'+t[1]).toLowerCase(),t])).values()];
+   if(!unique.length){$('formatOutcome').textContent='No demo songs are available for '+resolvedCategoryName+'. Choose another format or expand the catalog.';return;}
+   pool=unique.sort(()=>Math.random()-.5).slice(0,10);
+   $('formatOutcome').textContent=`Artist-only pool created: ${pool.length} unique ${resolvedCategoryName} tracks. No other artists are included.`;
+   startAuctionWithPool();
+   return;
+ }
+ prepareArtistNomination();
+}
+function startAuctionWithPool(){
+ auctionFinished=false;idx=0;budget=20;opBudget=20;my=[];opp=[];bonus=[];lot=0;high=0;highBidder=null;turn='you';novaThinking=false;
+ showStep(3);renderAuction();
+}
+function renderLineup(){
+ $('lineup').innerHTML=Array.from({length:5},(_,i)=>`<div class="slot"><b>START ${i+1}</b><span>${my[i]?my[i][0]+'<br><small>'+my[i][1]+'</small>':'Open slot'}</span></div>`).join('');
+ $('oppLineup').innerHTML=Array.from({length:5},(_,i)=>`<div class="slot"><b>NOVA ${i+1}</b><span>${opp[i]?opp[i][0]+'<br><small>'+opp[i][1]+'</small>':'Open slot'}</span></div>`).join('');
+}
+function playerCanBid(side){
+ return side==='you' ? (my.length<5 && budget>0) : (opp.length<5 && opBudget>0);
+}
+function renderAuction(){
+ if((!playerCanBid('you')&&!playerCanBid('nova'))||lot>=MAX_AUCTION_SONGS){finishAuction();return;}
+ if(idx>=pool.length){pool=[...pool,...tracks].sort(()=>Math.random()-.5);}
+ current=pool[idx];high=0;highBidder=null;auctionClosed=false;novaThinking=false;
+ openingBidder=(lot%2===0?'you':'nova');
+ turn=playerCanBid(openingBidder)?openingBidder:(openingBidder==='you'?'nova':'you');
+ $('currentSong').textContent=current[0];$('currentArtist').textContent=current[1];
+ $('auctionProgress').textContent=`Auction song ${Math.min(lot+1,MAX_AUCTION_SONGS)} / ${MAX_AUCTION_SONGS} · Time limit`;
+ $('budget').textContent='$'+budget;$('opBudget').textContent='$'+opBudget;
+ updateAuctionUI();renderLineup();
+}
+function updateAuctionUI(){
+ const youActive=playerCanBid('you'),novaActive=playerCanBid('nova');
+ $('currentPrice').textContent=highBidder ? `High bid $${high} · ${highBidder==='you'?'You lead':'Nova leads'}` : 'Opening bid $1';
+ $('auctionTurn').textContent=auctionClosed?'Lot closed':(turn==='you'?'Your turn to bid':(novaActive?'Nova is deciding…':'Nova cannot bid further'));
+ $('auctionMessage').textContent=highBidder ? (highBidder==='you'?'You are leading. Nova can challenge your bid.':'Nova is leading. Enter a higher total bid or pass.') : (turn==='you'?'No bids yet. Enter your opening bid or pass.':'Nova has the opening opportunity.');
+ const cap=Math.min(20,budget);
+ const amount=$('bidAmount'),slider=$('bidSlider'),submit=$('submitBid');
+ if(amount&&slider&&submit){
+   amount.max=cap;slider.max=Math.max(1,cap);
+   if(amount.value.trim()!=='' && Number(amount.value)>cap)amount.value=String(cap);
+   if(Number(slider.value)>cap)slider.value=String(Math.max(1,cap));
+   const canAct=turn==='you'&&youActive&&!auctionClosed;
+   amount.disabled=slider.disabled=submit.disabled=!canAct;
+   $('bidLimit').textContent=`Your remaining budget: $${budget} · Maximum bid: $${cap} · Starting songs: ${my.length}/5`;
+ }
+ document.querySelectorAll('#s3 button[onclick="passBid()"]').forEach(b=>b.disabled=(turn!=='you'||!youActive||auctionClosed));
+ if(turn==='nova'&&!auctionClosed&&!novaThinking&&novaActive){
+   novaThinking=true;
+   setTimeout(()=>{
+     novaThinking=false;
+     if(turn==='nova'&&!auctionClosed&&playerCanBid('nova'))novaAction();
+   },700);
+ }
+}
+function syncBidControls(){
+ const amount=$('bidAmount'),slider=$('bidSlider');
+ if(!amount||!slider)return;
+ amount.value=slider.value;
+}
+function syncBidSlider(){
+ const amount=$('bidAmount'),slider=$('bidSlider');
+ if(!amount||!slider)return;
+ // Keep the text field genuinely editable, including the temporary empty state while deleting.
+ if(amount.value.trim()==='')return;
+ if(!/^\d+$/.test(amount.value))return;
+ let v=Math.max(1,Math.min(Number(amount.max)||20,Number(amount.value)));
+ amount.value=String(v);slider.value=String(v);
+}
+function submitBid(){
+ const amount=$('bidAmount');
+ if(!amount)return;
+ if(amount.value.trim()===''||!/^\d+$/.test(amount.value)){
+   $('auctionMessage').textContent='Enter a whole-dollar bid before placing it.';
+   amount.focus();return;
+ }
+ bid(Number(amount.value));
+}
+function log(t){$('log').innerHTML=t+'<br>'+ $('log').innerHTML;}
+function bid(offer){
+ if(!current||auctionClosed||turn!=='you'||!playerCanBid('you'))return;
+ if(!Number.isInteger(offer)||offer<1||offer>20){$('auctionMessage').textContent='Enter a whole-dollar bid from $1 to $20.';return;}
+ if(offer>budget){$('auctionMessage').textContent=`You only have $${budget} remaining.`;return;}
+ if(highBidder==='nova'&&offer<=high){$('auctionMessage').textContent=`Your bid must be higher than Nova's $${high} bid.`;return;}
+ if(highBidder==='you'){ $('auctionMessage').textContent='You are already the high bidder.';return; }
+ high=offer;highBidder='you';turn='nova';log(`You bid $${high} on ${current[0]}.`);if(!playerCanBid('nova')){closeLot('you',true);return;}updateAuctionUI();
+}
+function passBid(){
+ if(!current||auctionClosed||turn!=='you'||!playerCanBid('you'))return;
+ log('You passed on '+current[0]+'.');
+ if(highBidder==='nova'){closeLot('nova');return;}
+ if(highBidder==='you'){closeLot('you');return;}
+ turn='nova';updateAuctionUI();
+}
+function songProfile(song){
+ const key=(song[0]+'|'+song[1]).toLowerCase();
+ let h=2166136261;
+ for(let i=0;i<key.length;i++){h^=key.charCodeAt(i);h=Math.imul(h,16777619);}
+ const n=(h>>>0);
+ // Deterministic demo-only category estimates. Real product must use verified Spotify/press data.
+ return {
+   replayability:55+(n%4300)/100,
+   popularity:50+((n>>>5)%4800)/100,
+   impact:45+((n>>>10)%5000)/100,
+   longevity:50+((n>>>15)%4800)/100,
+   audienceEngagement:50+((n>>>20)%4800)/100
+ };
+}
+function songMerit(song){
+ const p=songProfile(song);
+ return (p.replayability+p.popularity+p.impact+p.longevity+p.audienceEngagement)/5;
+}
+function novaBidCeiling(song){
+ const merit=songMerit(song);
+ const slotsNeeded=Math.max(1,5-opp.length);
+ const roundsLeft=Math.max(1,10-lot);
+ const budgetPerSlot=opBudget/slotsNeeded;
+ // Higher-scoring tracks justify a larger fraction of available budget,
+ // while Nova preserves enough cash to complete the five-song lineup.
+ const qualityFactor=Math.max(.35,Math.min(1.15,(merit-45)/45));
+ const reserve=Math.max(1,Math.floor(opBudget/slotsNeeded));
+ return Math.min(opBudget,Math.max(1,Math.floor(Math.min(budgetPerSlot, reserve*(.55+qualityFactor*.65)))));
+}
+function novaAction(){
+ if(!current||auctionClosed||turn!=='nova'||!playerCanBid('nova'))return;
+ const merit=songMerit(current);
+ const ceiling=novaBidCeiling(current);
+ const slotsNeeded=Math.max(1,5-opp.length);
+ const roundsLeft=Math.max(1,10-lot);
+ const budgetPerSlot=opBudget/slotsNeeded;
+ // Nova avoids overpaying early and becomes more flexible if it needs lineup slots late.
+ const urgency=slotsNeeded>=roundsLeft?1.18:1;
+ const maxPay=Math.min(ceiling,Math.max(1,Math.floor(budgetPerSlot*urgency)));
+ const wants=merit>=61 && opBudget>=slotsNeeded;
+ if(highBidder==='you'){
+   const next=high+1;
+   if(wants && next<=maxPay && next<=opBudget){
+     high=next;highBidder='nova';turn='you';
+     log(`Nova counter-bids $${high}. Track merit: ${merit.toFixed(1)}/100 across five demo criteria. Your turn.`);
+     if(!playerCanBid('you')){closeLot('nova');return;}
+   }else{
+     log(`Nova passes. The price exceeds its value/budget strategy (merit ${merit.toFixed(1)}/100).`);
+     closeLot('you',true);return;
+   }
+ }else if(highBidder==='nova'){
+   closeLot('nova');return;
+ }else if(wants && maxPay>=1){
+   high=1;highBidder='nova';turn='you';
+   log(`Nova opens at $1. It rates this track ${merit.toFixed(1)}/100 across the five demo criteria. Raise or pass.`);
+   if(!playerCanBid('you')){closeLot('nova');return;}
+ }else{
+   log(`Nova passes on ${current[0]} (demo merit ${merit.toFixed(1)}/100).`);
+   closeLot(null);return;
+ }
+ updateAuctionUI();
+}
+function closeLot(winner,alreadyLogged=false){
+ if(auctionClosed)return;auctionClosed=true;
+ if(winner==='you'){budget-=high;my.push(current);if(!alreadyLogged)log(`You win ${current[0]} for $${high}.`);}
+ else if(winner==='nova'){opBudget-=high;opp.push(current);log(`Nova wins ${current[0]} for $${high}.`);}
+ else log(`${current[0]} goes undrafted.`);
+ idx++;lot++;
+ if(!playerCanBid('you')&&!playerCanBid('nova')){finishAuction();return;}
+ renderAuction();
+}
+function nextLot(){
+ if(!current||auctionClosed||turn!=='you')return;
+ if(highBidder==='you'){closeLot('you');return;}
+ if(highBidder==='nova'){closeLot('nova');return;}
+ log(`You pass. Nova gets a chance to open ${current[0]}.`);turn='nova';updateAuctionUI();
+}
+function finishAuction(){
+ if(auctionFinished)return;
+ auctionFinished=true;
+ log(lot>=MAX_AUCTION_SONGS?'100-song limit reached. Auction closed.':(!playerCanBid('you')&&!playerCanBid('nova')?'Both contestants are out of funds or have completed their starting fives.':'Auction closed.'));
+ const earned=(my.length===5)?Math.floor(budget/4):0;
+ const novaEarned=(opp.length===5)?Math.floor(opBudget/4):0;
+ $('leftover').textContent='$'+budget;
+ $('bonusCount').textContent=earned;
+ $('bonusArea').innerHTML='';
+ $('bonusArea').innerHTML+=`<p class="muted">Your bonus eligibility: ${my.length===5?`5 starting songs completed; $${budget} remaining = ${earned} bonus slot(s), one per complete $4.`:`You have ${my.length}/5 starting songs, so no bonus songs are earned.`}</p>`;
+ $('bonusArea').innerHTML+=`<p class="muted">DJ Nova: ${opp.length}/5 starting songs · $${opBudget} remaining · ${novaEarned} bonus slot(s) earned.</p>`;
+ bonus=Array.from({length:earned},(_,i)=>null);
+ if(earned){
+   for(let i=0;i<earned;i++){
+     let t=tracks[(i+idx)%tracks.length];bonus[i]=t;
+     $('bonusArea').innerHTML+=`<div class="track"><div><strong>Bonus #${i+1}: ${t[0]}</strong><small>${t[1]}</small></div><div class="row"><button onclick="useBonus(${i},'keep')">Keep</button><button onclick="useBonus(${i},'reorder')">Reorder</button><button onclick="useBonus(${i},'replace')">Replace</button></div></div>`;
+   }
+ }else{
+   $('bonusArea').innerHTML+='<p class="muted">No bonus slots earned. You can proceed to judging.</p>';
+ }
+ showStep(4);renderLineup();
+}
+function useBonus(i,action){let t=bonus[i];if(!t)return;if(action==='replace'){let n=prompt('Replace which starting position? Enter 1–5');n=Number(n)-1;if(n>=0&&n<5){my[n]=t;bonus[i]=null;log(`Bonus #${i+1} used to replace starting slot ${n+1}.`);}}else if(action==='reorder'){let a=prompt('First position to swap (1–5)');let b=prompt('Second position to swap (1–5)');a=Number(a)-1;b=Number(b)-1;if(a>=0&&a<5&&b>=0&&b<5&&a!==b){[my[a],my[b]]=[my[b],my[a]];bonus[i]=null;log(`Bonus #${i+1} used to reorder slots ${a+1} and ${b+1}.`);}}else{log(`Bonus #${i+1} kept for a bonus matchup.`);}renderLineup();}
+function score(song,oppSong){
+ const profile=s=>{const p=songProfile(s);return [p.replayability,p.popularity,p.impact,p.longevity,p.audienceEngagement].map(v=>Math.round(v));};
+ return [profile(song),profile(oppSong)];
+}
+function startJudging(){match=0;myWins=0;oppWins=0;$('finalResult').classList.add('hidden');showStep(5);renderMatch();}
+function renderMatch(){let total=Math.min(5+Math.max(0,bonus.filter(x=>x).length),7);if(match>=5){$('matchups').innerHTML=`<div class="notice">Starting five complete. Demo result: ${myWins}–${oppWins}. Bonus matchups can be added in a full version.</div>`;$('nextMatchBtn').textContent='Restart demo';return;}let a=my[match]||tracks[match],b=opp[match]||tracks[match+5];let [sa,sb]=score(a,b);let sum=x=>x.reduce((v,n)=>v+n,0)/5;let av=sum(sa),bv=sum(sb);if(av>=bv)myWins++;else oppWins++;let cats=['Replayability','Popularity','Impact','Longevity','Audience Engagement'];$('matchups').innerHTML=`<div class="row between"><h2>Matchup ${match+1} of 5</h2><span class="pill">Score ${myWins}–${oppWins}</span></div><div class="grid"><div class="panel"><div class="tag">Your song</div><h2>${a[0]}</h2><p class="muted">${a[1]}</p><h2>${av.toFixed(1)} / 100</h2>${cats.map((c,i)=>`<p class="small">${c} · ${sa[i]}</p><div class="scorebar"><i style="width:${sa[i]}%"></i></div>`).join('')}</div><div class="panel"><div class="tag">DJ Nova</div><h2>${b[0]}</h2><p class="muted">${b[1]}</p><h2>${bv.toFixed(1)} / 100</h2>${cats.map((c,i)=>`<p class="small">${c} · ${sb[i]}</p><div class="scorebar"><i style="width:${sb[i]}%"></i></div>`).join('')}</div></div><div class="notice">${av>=bv?'Your song wins this matchup.':'DJ Nova wins this matchup.'} Scores are generated for demonstration only.</div>`;match++;}
+function nextMatch(){if(match>=5){restart();return;}renderMatch();}
+function restart(){auctionFinished=false;genre='Rap';format='artist';preference='Chief Keef';pool=[];idx=0;budget=20;opBudget=20;my=[];opp=[];bonus=[];current=null;high=0;highBidder=null;turn='you';lot=0;novaThinking=false;novaThinking=false;match=0;myWins=0;oppWins=0;renderGenres();renderPrefs();$('log').innerHTML='';showStep(1);}
+renderGenres();renderPrefs();
+</script></body></html>
